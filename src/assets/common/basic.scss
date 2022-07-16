@@ -1,0 +1,299 @@
+body {
+    font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
+}
+
+#app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: $dark;
+      
+    .page {
+        height: 100vh;
+    }
+}
+
+
+/* position */
+.relative {
+	position: relative !important;
+}
+.absolute {
+	position: absolute !important;
+}
+.fixed {
+	position: fixed !important;
+}
+.sticky {
+	position: sticky !important;
+}
+
+.pointer { 
+	cursor: pointer;
+}
+
+/* text alignment */
+.align-right {
+    text-align: right;
+}
+.align-left {
+    text-align: left;
+}
+.align-center {
+    text-align: center;
+}
+
+/* layout */
+.d-grid {
+	display: grid;
+}
+.d-inlne-block {
+	display: inline-block;
+}
+.d-inline-flex {
+	display: inline-flex;
+}
+.d-table {
+	display: inline;
+}
+.d-block {
+    display: block;
+}
+.d-flex {
+	display: -webkit-flex;
+    display: flex;
+    
+    &.column {
+        flex-direction: column;
+		
+		&.reverse {
+			flex-direction: column-reverse !important;
+		}
+		
+		&.top {
+			justify-content: flex-start;
+		}
+		&.middle {
+		    justify-content: center;
+		}
+		&.bottom {
+			justify-content: flex-end;
+		}
+		
+		&.left {
+			align-items: flex-start;
+		}
+		&.center {
+		    align-items: center;
+		}
+		&.right {
+			align-items: flex-end;
+		}
+    }
+    &.row {
+        flex-direction: row;
+		
+		&.reverse {
+			flex-direction: row-reverse !important;
+		}
+		
+		&.left {
+			justify-content: flex-start;
+		}
+		&.center {
+		    justify-content: center;
+		}
+		&.right {
+			justify-content: flex-end;
+		}
+		
+		&.top {
+			align-items: flex-start;
+		}
+		&.middle {
+		    align-items: center;
+		}
+		&.bottom {
+			align-items: flex-end;
+		}
+    }
+	
+	&.wrap {
+		flex-wrap: wrap;
+	}
+	&.nowrap {
+		flex-wrap: nowrap;
+	}
+	
+    &.space-around {
+        justify-content: space-around;
+    }
+    &.space-between {
+        justify-content: space-between;
+    }
+	
+	.flex-item {
+		&.left {
+			justify-self: flex-start;
+		}
+		&.right {
+			justify-self: flex-end;
+		}
+		
+		&.grow {
+			flex-grow: 1;
+		}
+	}
+}
+
+.u-scrollbar {
+    
+    &::-webkit-scrollbar {
+        width:2px;
+		height: 2px;
+		background-color: #2e6388;
+    }
+    /* 滚动槽 */
+    &::-webkit-scrollbar-track {
+        background-color: $green;
+        border-radius:2px;
+    }
+    /* 滚动条滑块 */
+    &::-webkit-scrollbar-thumb {
+        border-radius:2px;
+		background-color: $green;
+    }
+    &::-webkit-scrollbar-thumb:window-inactive {
+        background:rgba(0, 0, 0, 0.1);
+    }
+	/* 滚动条没有滑块的轨道部分 */
+	&::-webkit-scrollbar-track-piece {
+		background-color: #2e6388;
+	}
+}
+
+.img-icon {
+	height: 32px;
+	width: 32px;
+}
+
+.fc-black {
+	color: #000;
+}
+.fc-dark {
+	color: #333;
+}
+.fc-white {
+	color: #fff;
+}
+.fc-lightgray { 
+	color: #F6F6F6;
+}
+.fc-gray {
+	color: #ccc;
+}
+
+.bordered {
+	box-shadow:0 0 0 1px var(--el-input-border-color,var(--el-border-color)) inset;
+}
+
+.circle { border-radius: 50% !important; }
+
+/* 宽度 百分比 */
+@for $width from 1 through 100 {
+	/*宽度百分比*/
+	.width-#{$width} {
+		width: calc($width / 100 * 100vw) !important;
+	}
+	
+	.w-#{$width} {
+		width: calc($width / 100 * 100%) !important;
+	}
+}
+/* 高度 百分比 */
+@for $height from 1 through 100 {
+	/*宽度百分比*/
+	.height-#{$height} {
+		height: calc($height / 100 * 100vh) !important;
+	}
+	
+	.h-#{$height} {
+		height: calc($height / 100 * 100%) !important;
+	}
+}
+/* 添加padding margin 样式 */
+@for $i from 0 through 16 {
+    $fontsize: 0.25rem * $i;
+    
+    .font-size-#{$i} {
+        font-size: $fontsize !important;
+    }
+    
+	.rounded-#{$i} {
+		border-radius: $fontsize !important;
+	}
+	
+    .margin-#{$i} {
+        margin: $fontsize !important;
+    }
+    .margin-x-#{$i} {
+        margin-left: $fontsize !important;
+        margin-right: $fontsize !important;
+    }
+    .margin-y-#{$i} {
+        margin-bottom: $fontsize !important;
+        margin-top: $fontsize !important;
+    }
+    .margin-bottom-#{$i} {
+        margin-bottom: $fontsize !important;
+    }
+    .margin-left-#{$i} {
+        margin-left: $fontsize !important;
+    }
+    .margin-right-#{$i} {
+        margin-right: $fontsize !important;
+    }
+    .margin-top-#{$i} {
+        margin-top: $fontsize !important;
+    }
+    
+    .padding-#{$i} {
+        padding: $fontsize !important;
+    }
+    .padding-x-#{$i} {
+        padding-left: $fontsize !important;
+        padding-right: $fontsize !important;
+    }
+    .padding-y-#{$i} {
+        padding-bottom: $fontsize !important;
+        padding-top: $fontsize !important;
+    }
+    .padding-bottom-#{$i} {
+        padding-bottom: $fontsize !important;
+    }
+    .padding-left-#{$i} {
+        padding-left: $fontsize !important;
+    }
+    .padding-right-#{$i} {
+        padding-right: $fontsize !important;
+    }
+    .padding-top-#{$i} {
+        padding-top: $fontsize !important;
+    }
+}
+
+// scrollbar 样式
+.el-scrollbar {
+	.el-scrollbar__bar {
+		&.is-vertical {
+			width: 2px !important;
+		}
+		&.is-horizontal {
+			height: 2px !important;
+		}
+	}
+}
