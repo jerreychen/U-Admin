@@ -8,7 +8,13 @@
 				</el-icon>
 			</Header>
             <el-main id="main-content" ref="mainContentRef" class="main-content u-scrollbar">
-				<VuWaterPrint color="#F9F9F9"><router-view /></VuWaterPrint>
+				<VuWaterPrint color="#F9F9F9">
+					<router-view v-slot="{ Component }">
+						<keep-alive>
+							<component :is="Component"></component>
+						</keep-alive>
+					</router-view>
+				</VuWaterPrint>
 			</el-main>
         </el-container>
     </el-container>
