@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%- title %></title>
+	<style type="text/css">
+		.loading-before-init {
+			align-items: center;
+			display: flex;
+			left: .25rem;
+			top: .25rem;
+			position:absolute;
+		}
+	    .loading-before-init .loading {
+			animation: circle infinite 0.75s linear;
+			border: 2px solid #419DF7;
+			border-radius: 100%;
+			border-top-color: transparent;
+			height: 17px;
+			width: 17px;
+	    }
+		.loading-before-init .loading-text {
+			color: #333;
+			margin-left: .5rem;
+		}
+	    @keyframes circle {
+	      0% {
+	       transform: rotate(0);
+	      }
+	      100% {
+	       transform: rotate(360deg);
+	      }
+	    }
+	</style>
+  </head>
+  <body>
+    <div id="app">
+		<div class="loading-before-init">
+			<span class="loading">
+			</span>
+			<span class="loading-text">
+				系统资源加载中...
+			</span>
+		</div>
+	</div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

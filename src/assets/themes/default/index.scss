@@ -1,0 +1,135 @@
+ .sidebar {
+	background-color: $bg-sidebar;
+	box-shadow: none !important;
+	
+	.logo {
+		background-color: $white;
+		
+		.text-system-name {
+			color: $bg-sidebar;
+		}
+		
+	}
+	
+	.dashboard-home {
+		background-color: $green !important;
+		/*
+		&::after {
+			border-top: 18px solid transparent;
+			border-bottom: 19px solid transparent;
+			border-right: 16px solid $bg-sidebar;
+			border-left: 0px solid transparent;
+			content: '';
+			display: block;
+			height:0;
+			position: absolute;
+			width: 0; 
+			top: 0;
+			right: 0;
+		}*/
+	}
+	
+	.main-menu {
+		
+		.el-menu {
+			
+			.el-menu-item {
+				background-color: $bg-sidebar;
+				color: $text-sidebar;
+				
+				&:hover {
+					background-color: $bg-sidebar-hover !important;
+					color: $text-sidebar-hover;
+				}
+				
+				&.is-active {
+					background-color: $green !important;
+					color: $white;
+				}
+			}
+			
+			.el-sub-menu {
+				.el-sub-menu__title {
+					background-color: $bg-sidebar;
+					color: $text-sidebar;
+					
+					&:hover {
+						background-color: $bg-sidebar-hover;
+						color: $text-sidebar-hover;
+					}
+				}
+				
+				.el-menu-item {
+					background-color: $bg-sidebar;
+					color: $text-sidebar;
+					
+					&:hover {
+						background-color: $bg-sidebar-hover;
+						color: $text-sidebar-hover;
+					}
+					
+					&.is-active {
+						background-color: $lightgray !important;
+						color: $text-sidebar-active !important;
+						
+						&::after {
+							border-right: 8px solid transparent;
+							border-left: 8px solid $bg-sidebar-open;
+							border-top: 8px solid transparent;
+							border-bottom: 8px solid transparent;
+							content: '';
+							display: block;
+							height: 0;
+							right: -8px;
+							position: absolute;
+							width: 0;
+						}
+					}
+				}
+				
+				&.is-opened {
+					.el-sub-menu__title {
+						background-color: $bg-sidebar-open;
+						color: $text-sidebar-open;
+					}
+					.el-menu-item {
+						background-color: $bg-sidebar-open;
+						color: $text-sidebar-open;
+					}
+				}
+			}
+		}	
+	}
+}
+
+.main {
+	background-color: $green !important;
+}
+
+.header {
+	.breadcrumb {
+		background-color: $green !important;
+			
+		.u-breadcrumb {
+			
+			.el-breadcrumb__inner {
+				color: $lightgray !important;
+				
+				&:hover {
+					color: $lightgray;
+				}
+				
+				&.is-link {
+					color: $gray;
+				}
+			}
+			.el-breadcrumb__separator {
+				color: $gray;
+			}
+		}
+		
+		.current-date-time {
+			color: $lightgray !important;
+		}
+	}
+}
