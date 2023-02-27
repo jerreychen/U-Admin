@@ -1,4 +1,5 @@
 <template>
+<div>
 	<div class="u-table-search"
 	    :class="{
 	        'u-table-search_show': searchFormVisible,
@@ -25,7 +26,7 @@
 	</div>
     
 	<div class="u-table-wrapper" v-loading="loading">
-        <div class="d-flex space-between margin-bottom-2">
+        <div class="d-flex space-between margin-bottom-2" v-if="showAction">
             <div>
                 <el-button type="success" icon="Plus" :title="`新增${title}记录`" v-if="allowCreate" @click="handleNewRecord()">新增{{title}}</el-button>
                 <el-popconfirm 
@@ -93,10 +94,10 @@
 			
 			<el-table-column
 				type="index"
-				width="55px"
-				align="center"
-				label="序号"
-				fixed
+				:width="indexColumn.width ?? '55px'"
+				:align="indexColumn.align ?? 'center'"
+				:label="indexColumn.title ?? '序号'"
+				:fixed="indexColumn.fixed ?? true"
 				v-if="indexable"></el-table-column>
              
 
@@ -156,7 +157,7 @@
                 align="center" 
                 fixed="right"
                 :width="`${rowActionColumnWidth || actionButtons.length * (rowActionButtonLabel ? 56 : 25)}px`"
-                v-if="!!actionButtons.length || !!rowActionCommands.length">
+                v-if="showAction && showActionColumn && (!!actionButtons.length || !!rowActionCommands.length)">
                 <template #default="scope">
                     <div class="row-action-buttons d-flex row middle space-around" :class="{ 'center': rowActionCenter }">
 						<template v-for="(btn, btnIndex) in actionButtons" :key="`u-table-action-button-${btnIndex}`">
@@ -222,7 +223,9 @@
             </el-table-column>
         </el-table>
         <div class="d-flex row middle space-between margin-top-2" v-if="total !== undefined && total > 0">
-            <div class="">总共{{ total }}条记录，第{{ currentPage }}页/共{{ totalPages }}页</div>
+            <div class="pagination-info">
+				<span v-if="pagerShowInfo">总共{{ total }}条记录，第{{ currentPage }}页/共{{ totalPages }}页</span>
+			</div>
             <el-pagination
                 class="u-pagination"
                 :background="pagerBackground"
@@ -232,7 +235,7 @@
                 :layout="pagerLayout"
 				:prev-text="pagerPrevText"
 				:next-text="pagerNextText"
-				:default-current-page="0"
+				:default-current-page="pagerCurrent"
                 v-model:page-size="searchFormValue[pageSizeName]"
                 v-model:current-page="currentPage"
                 :total="total"
@@ -286,8 +289,11 @@
 	<el-drawer v-if="editorFields && editorFields.length > 0 && drawerForm"
 		v-model="editorVisible" 
 		:title="editorTitle" 
-		:size="editorWidth">
-		<VuFormBox
+		:size="editorWidth"
+		:append-to-body="true"
+		:destroy-on-close="true">
+		<VuForm
+			ref="editorRef"
 			:fields="editorFields"
 			:rules="editorRules"
 			:labelWidth="editorLabelWidth"
@@ -296,8 +302,13 @@
 			@cancel="handleEditorCancel"
 			@submit="handleEditorSubmit"
 			:value="editorValue">
-		</VuFormBox>
+		</VuForm>
+		<template #footer>
+			<el-button @click="handleEditorCancel">取消</el-button>
+			<el-button type="primary" @click="handleEditorSubmit">保存提交</el-button>
+		</template>
 	</el-drawer>
+</div>
 </template>
 
 <script setup>
@@ -320,11 +331,13 @@
 		indent: { type: Number, default: 16 },
 		expandable: { type: Boolean, default: false },
 		indexable: { type: Boolean, default: false },
+		indexColumn: { type: Object, default: () => ({}) },
 		selectable: { type: Boolean, default: false },
 		
 		searchFields: { type: Array },
 		editorFields: { type: Array },
 		editorRules: { type: Object },
+		editorDefaultValue: { type: Object, default: () => ({}) },
 		showLabel: { type: Boolean, default: true },
 		labelWidth: { type: String, default: '65px' },
 		editorWidth: { type: [Number, String], default: '50vw' },
@@ -335,12 +348,13 @@
 		pageSize: { type: Number, default: 20 },
 		total: { type: Number },
 		pagerCount: { type: Number, default: 5 },
-		pagerSmall: { type: Boolean, default: false },
+		pagerSmall: { type: Boolean, default: true },
 		
 		treeProps: { type: Object },
 		pagerProps: { type: Object },
 		importProps: { type: Object },
 		
+		showAction: { type: Boolean, default: true },
 		allowImport: { type: Boolean, default: false },
 		allowCreate: { type: Boolean, default: false },
 		allowEdit: { type: Boolean, default: true },
@@ -352,7 +366,8 @@
 		allowExport: { type: Boolean, default: false },
 		allowFilter: { type: Boolean, default: false },
 		allowPrint: { type: Boolean, default: false },
-		
+	
+		showActionColumn: { type: Boolean, default: true },
 		rowActionColumnWidth: { type: Number },
 		rowActionCenter: { type: Boolean, default: false },
 		rowActionButton: { type: Function },
@@ -372,7 +387,6 @@
 		rowDbClick: { type: Function },
 		rowSelectable: { type: Function },
 		get: { type: Function },
-		remove: { type: Function },
 		
 		searchValue: { type: Object, default: () => ({}) },
 		drawerForm: { type: Boolean, default: false }
@@ -384,8 +398,9 @@
 	])
 
 	const tableRef = ref()
+	const editorRef = ref()
 	const importFormRef = ref()
-	const editorValue = ref({ })
+	const editorValue = ref(props.editorDefaultValue)
 	const editorVisible = ref(false)
 	const editMode = ref(false)
 	const editorTitle = ref('')
@@ -412,6 +427,14 @@
 	const pagerLayout = computed(() => {
 		const { layout } = props.pagerProps || {}
 		return layout || 'sizes, prev, pager, next, jumper';
+	})
+	const pagerCurrent = computed(() => {
+		const { current } = props.pagerProps || {}
+		return current || 0
+	})
+	const pagerShowInfo = computed(() => {
+		const { showInfo } = props.pagerProps || {}
+		return showInfo ?? true
 	})
 	const pageIndexName = ref(computed(() => {
 		const { pageIndex } = props.pagerProps || {}
@@ -477,7 +500,7 @@
 			return
 		}
 		editorTitle.value = `新增${props.title}`
-		editorValue.value = Object.assign({}, data || {});
+		editorValue.value = Object.assign({}, data || props.editorDefaultValue);
 		editMode.value = false
 		editorVisible.value = true
 	}
@@ -517,8 +540,26 @@
 		editorVisible.value = false
 	}
 	// 数据提交
-	const handleEditorSubmit = (formValue) => {
-		emits(editMode.value ? 'update' : 'create', formValue, { visible: editorVisible});
+	const handleEditorSubmit = () => {
+		if(props.drawerForm) {
+			const formValue = editorRef.value.getValue()
+			
+			// 是否有rules
+			if(!props.editorRules || !Object.keys(props.editorRules)) {
+				return emits(editMode.value ? 'update' : 'create', formValue, { visible: editorVisible})
+			}
+				
+			editorRef.value.form.validate(valid => {
+				if(!valid) {
+					return
+				}
+				 
+				emits(editMode.value ? 'update' : 'create', formValue, { visible: editorVisible});
+			})
+		}
+		else {
+			emits(editMode.value ? 'update' : 'create', val, { visible: editorVisible});
+		}
 	}
 	
 	const getButtonConfig = (propName, iconName, emitName) => {

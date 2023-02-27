@@ -22,6 +22,7 @@
 		:on-remove="handleOnRemove"
 		:on-error="handleOnError"
 		:on-exceed="handleOnExceed"
+		:before-upload="handleBeforeUpload"
         v-model:file-list="fileList">
 		<template v-if="drag">
 			<el-icon class="el-icon--upload"><upload-filled /></el-icon>
@@ -67,6 +68,7 @@
 		multiple: { type: Boolean, default: false },
 		tips: { type: String },
 		accept: { type: String },
+		fileSize: { type: Number },
 		listType: { type: String, default: 'picture-card' },
 		disabled: { type: Boolean, default: false },
 		limit: { type: Number },
@@ -79,7 +81,7 @@
 	
 	const emits = defineEmits(['update:modelValue'])
 	
-	const fileList = ref([])
+	const fileList = ref(props.modelValue)
 	const actionHeaders = Object.assign({
 		'PC-TOKEN': store.getters.token
 	}, props.headers)
@@ -104,13 +106,19 @@
 		return url;
 	})
 	
-	const uploadTips = ref('')
-	if(props.accept) {
-		uploadTips.value += `允许上传文件类型（${props.accept}）`
-	}
-	if(props.limit) {
-		uploadTips.value += `最多上传${props.limit}个 `
-	}
+	const uploadTips = ref(computed(() => {
+		let str = ''
+		if(props.accept) {
+			str += `允许上传文件类型（${props.accept}）`
+		}
+		if(props.limit) {
+			str += `最多上传${props.limit}个 `
+		}
+		if(props.fileSize) {
+			str += `支持单个文件最大${props.fileSize}M`
+		}
+		return str
+	}))
 	
 	const dialogVisible = ref(false)
 	const dialogImageUrl = ref('')
@@ -118,7 +126,7 @@
 	// 监听modelValue变化
 	watch(() => props.modelValue, (v) => {
 		fileList.value = v
-	})
+	}, { deep: true })
 	
 	const handlePictureCardPreview = (file) => {
 		if(!props.previewable) {
@@ -136,7 +144,7 @@
 			return
 		}
 	
-		if(res[resMap['code']] === 0) {
+		if(res[resMap['code']] === 200) {
 			let url = res[resMap['data']]
 			const index = fileList.value.findIndex(item=> {
 				return item.uid === file.uid
@@ -154,7 +162,7 @@
 			return
 		}
 		
-		message('错误提示', res[resMap['message']] || errorMessage).notify('error')
+		message('错误提示', res[resMap['message']] || props.errorMessage).notify('error')
 		fileUpload.value.handleRemove(file) 
 		emits('update:modelValue', fileList.value)
 	}
@@ -177,6 +185,18 @@
 	
 	const handleOnError = (file) => {
 		message('错误提示', props.errorMessage).notify('error')
+	}
+	
+	const handleBeforeUpload = (rawFile) => {
+		const { size, name } = rawFile
+		// fileSize 单位M（1024 * 1024）
+		const { fileSize } = props
+		// 如果文件太大，取消上传
+		if(size > fileSize * 1024 * 1024) {
+			message('错误提示', `文件大小超出，上传失败：${name}`).notify('error')
+			return false 
+		}
+		return true
 	}
 	
 	defineExpose({

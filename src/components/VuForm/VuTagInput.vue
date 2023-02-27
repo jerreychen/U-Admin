@@ -51,6 +51,10 @@
 	const inputVisible = ref(false)
 	const inputValue = ref('')
 	
+	watch(() => props.modelValue, v => {
+		tagList.value = v || []
+	})
+	
 	const showInput = () => {
 		inputVisible.value = true
 		nextTick(() => {

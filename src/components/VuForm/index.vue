@@ -23,8 +23,8 @@
 				:rules="field.rules"
 				:required="field.required"
 				:class="`${field.class || ''} ${field.inlineTips ? 'inline-tips' : ''}`"
-				:label="showLabel ? `${getDefaultPlaceHolder(field, formValue)}:` : ''"
-				:label-width="showLabel ? (field.labelWidth || labelWidth) : '0px'"
+				:label="showLabel && field.showLabel !== false ? `${getDefaultPlaceHolder(field, formValue)}:` : ''"
+				:label-width="showLabel && field.showLabel !== false ? (field.labelWidth || labelWidth) : '0px'"
 				v-if="isFunction(field.hidden) ? !field.hidden(formValue[field.name], formValue) : !field.hidden">
 				<template #label v-if="field.tips && !showTips">
 					<div class="d-flex row middle relative">
@@ -35,7 +35,7 @@
 								</template>
 							</el-popover>
 						</div>
-						<span>{{showLabel ? getDefaultPlaceHolder(field, formValue) : ''}}:</span>
+						<span>{{showLabel && field.showLabel !== false ? getDefaultPlaceHolder(field, formValue) : ''}}:</span>
 					</div>
 				</template>
 				
@@ -57,6 +57,7 @@
 					:false-label="field.falseValue"
 					:disabled="field.disabled"
 					:size="field.size"
+					@change="isFunction(field.change) ? field.change($event, formValue) : (()=>{})"
 					v-model="formValue[field.name]">
 					{{field.label}}
 				</el-checkbox>
@@ -146,6 +147,8 @@
 					:inactive-value="field.inactiveValue ?? 0"
 					:active-color="field.activeColor || '#409EFF'"
 					:inactive-color="field.inactiveColor || '#C0CCDA'"
+					:before-change="field.beforeChange"
+					@change="isFunction(field.change) ? field.change($event, formValue) : undefined"
 					v-model="formValue[field.name]">
 				</el-switch>
 				
@@ -220,6 +223,7 @@
 					:data="field.data"
 					:map="field.map"
 					:accept="field.accept"
+					:fileSize="field.fileSize"
 					:errorMessage="field.errorMessage"
 					v-model="formValue[field.name]">
 				</VuUpload>
@@ -460,6 +464,7 @@
 				<el-input v-else
 					:type="field.type || 'text'"
 					v-model="formValue[field.name]"
+					@blur="isFunction(field.blur) ? field.blur(formValue[field.name], formValue) : (()=>{})"
 					:formatter="field.formatter"
 					:clearable="field.clearable"
 					:showPassword="field.showPassword"

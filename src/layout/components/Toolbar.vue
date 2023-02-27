@@ -20,7 +20,7 @@
         <el-dropdown class="toolbar-item" @visible-change="handleVisibleChange" @command="handleAvatarCommand">
             <div class="d-flex row middle space-between">
                 <el-avatar :src="avatarUrl" size="small"></el-avatar>
-				<span v-if="displayName">{{displayName}}</span>
+				<span v-if="displayName" class="padding-left-2">{{displayName}}</span>
                 <el-icon class="margin-left-1">
                     <component :is="isDropdown ? 'ArrowUp' : 'ArrowDown'" />
                 </el-icon>

@@ -79,7 +79,11 @@ const user = {
 				
 				// 设置用户资料缓存
 				if(userInfoRes.code === 200) {
-					commit('SET_USER_INFO', userInfoRes.data)
+					const { avatar, nickname } = userInfoRes.data
+					commit('SET_USER_INFO', {
+						displayName: nickname,
+						avatarUrl: avatar
+					})
 				}
 			}
 			

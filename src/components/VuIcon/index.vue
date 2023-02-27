@@ -1,7 +1,7 @@
 <template>
 	<div class="u-icon">
 		<el-avatar :size="size" :src="src" v-if="type === 'image'"></el-avatar> 
-		<i :class="`${iconClass} icon-${name}`" :style="{
+		<i :class="`${iconClass} ${iconPrefix}${name}`" :style="{
 			'color': `${color || ''}`,
 			'font-size': `${size}px`
 		}" v-else-if="type === 'font'"></i> 
@@ -20,6 +20,7 @@
 		},
 		src: { type: String },
 		iconClass: { type: String, default: 'iconfont' },
+		iconPrefix: { type: String, default: 'icon-' },
 		name: { type: String },
 		color: { type: String },
 		size: { type: Number }

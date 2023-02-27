@@ -69,4 +69,9 @@ body {
 	.el-drawer__body {
 		padding: 0;
 	}
+	
+	.el-drawer__footer {
+		border-top: 1px solid $lightgray;
+		padding-bottom: 10px !important;
+	}
 }

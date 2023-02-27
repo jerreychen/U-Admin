@@ -20,7 +20,7 @@
 			:active-text="config.activeText"
 			:inactive-text="config.inactiveText"
 			:inline-prompt="config.inlinePrompt"
-			:disabled="config.disabled ?? true">
+			:disabled="isFunction(config.disabled) ? config.disabled(data, prop) : !!config.disabled">
 		</el-switch>
 	
 		<el-input 
@@ -96,9 +96,11 @@
 		
 		<template v-else-if="type === 'color'">
 			<div class="d-flex row middle">
-				<span style="border:1px solid #f0f0f0;display:inline-block;height:1rem;margin-right:.5rem;width:2rem;" :style="{
-					'background-color': formatter(data, prop)
-				}"></span>
+				<span style="border:1px solid #f0f0f0;display:inline-block;height:1rem;margin-right:.5rem;width:2rem;" 
+					:style="{
+						'background-color': formatter(data, prop)
+					}">
+				</span>
 				<span>{{formatter(data, prop)}}</span>
 			</div>
 		</template>
@@ -106,13 +108,26 @@
 		<el-image
 			v-else-if="type === 'image'"
 			:src="formatter(data, prop)"
+			:fit="config.fit"
 			:lazy="config.lazy || false"
 			:preview-src-list="!!config.previewable ? (isFunction(config.preview) ? config.preview(data, prop) : [data[prop]]) : undefined"
 			:preview-teleported="true"
 			@click.native.stop="isFunction(config.click) ? config.click(data, prop) : undefined"
-			:size="config.size || 'default'">
+			:style="config.style">
 		</el-image>	
 		
+		<el-progress 
+			:percentage="data[prop]" 
+			:text-inside="config.textInside"
+			:type="config.type"
+			:status="config.status"
+			:color="config.color"
+			:format="config.format"
+			:stroke-width="config.strokeWidth"
+			:show-text="config.showText"
+			v-else-if="type === 'progress'">
+		</el-progress>
+			
 		<el-link
 			v-else-if="type === 'link'"
 			:size="config.size || 'default'"

@@ -3,7 +3,7 @@
 		<el-tabs class="u-tab" 
 			:type="type" 
 			:tab-position="tabPosition"
-			@tab-click="$emit('tabClick', this)"
+			@tab-click="$emit('tabClick', $event)"
 			:stretch="stretch"
 			:model-value="activeIndex">
 			<template v-if="Array.isArray(title)">

@@ -43,6 +43,13 @@ export const getRandomString = (len) => {
   return _str.join('');
 }
 
+export const getApiPath = (path) => {
+	if(path.startsWith('/')) {
+		path = path.substr(1)
+	}
+	return `${import.meta.env.VITE_APP_BASE_API}/${path}`
+}
+
 export const combinePath = function () {
 	let path = []
 	for(let i = 0; i < arguments.length; i++) {

@@ -26,8 +26,8 @@ export default {
 			return new URL(`../assets/${url}`, import.meta.url).href
 		}
         
-        app.config.globalProperties.goto = (path) => {
-            router.push({ path })
+        app.config.globalProperties.goto = (path, query) => {
+            router.push({ path, query })
         }
         
         app.config.globalProperties.goback = () => {

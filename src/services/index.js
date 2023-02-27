@@ -7,13 +7,21 @@ const modules = {
 	 * 默认操作方式: POST
 	 */
 	/*dict: {
-		get: '',
+		find: '',
 		list: '',
 		search: '',
 		create: '',
 		update: '',
 		remove: ''
 	}*/
+}
+
+const getPath = (moduleName, path) => {
+	if(path.startsWith('/')) {
+		path = path.substr(1)
+	}
+	
+	return `/${moduleName}/${path}`
 }
 
 /**
@@ -23,6 +31,12 @@ export default (moduleName) => {
 	const currentModule = modules[moduleName];
 	
 	return {
+		get: (path, data) => {
+			return request.get(getPath(moduleName, path), data)
+		},
+		post: (path, data) => {
+			return request.post(getPath(moduleName, path), data)
+		},
 		list: (data) => {
 			if(!currentModule || currentModule.list) {
 				return request.post(`/${moduleName}/list`, data)
@@ -51,11 +65,11 @@ export default (moduleName) => {
 			return request.post(currentModule.update, data)
 		},
 		
-		get: (data) => {
-			if(!currentModule || !currentModule.get) {
-				return request.post(`/${moduleName}/get`, data)
+		find: (data) => {
+			if(!currentModule || !currentModule.find) {
+				return request.post(`/${moduleName}/find`, data)
 			}
-			return request.post(currentModule.get, data)
+			return request.post(currentModule.find, data)
 		},
 		
 		remove: (data) => {

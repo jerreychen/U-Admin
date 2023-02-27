@@ -11,8 +11,9 @@
 	      :icon="iconKey ? activity[iconKey] : ''"
 	      :color="colorKey ? activity[colorKey] : ''"
 	      :timestamp="labelKey ? activity[labelKey] : ''">
-		  <span v-if="contentKey" v-html="activity[contentKey]"></span>
-	      <slot name="item" :item="activity" v-else></slot>
+	      <slot name="item" :item="activity">
+			  <span v-html="activity[contentKey]"></span>
+		  </slot>
 	    </el-timeline-item>
 	  </el-timeline>
 </template>

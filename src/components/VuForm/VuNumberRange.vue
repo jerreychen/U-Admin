@@ -1,5 +1,5 @@
 <template>
-	<el-row class="u-number-range w-100">
+	<el-row class="u-number-range">
 		<el-col :span="11">
 			<el-input-number
 				:placeholder="startPlaceholder"
@@ -8,8 +8,8 @@
 				:min="min"
 				:max="maxValue"
 				:disabled="disabled"
-				@input="updateMinValue"
-				:model-value="minValue"></el-input-number>
+				@blur="updateMinValue"
+				v-model="minValue"></el-input-number>
 		</el-col>
 		<el-col :span="2" align="center">{{separator}}</el-col>
 		<el-col :span="11">
@@ -20,52 +20,49 @@
 				:min="minValue"
 				:max="max"
 				:disabled="disabled"
-				@input="updateMaxValue"
-				:model-value="maxValue"></el-input-number>
+				@blur="updateMaxValue"
+				v-model="maxValue"></el-input-number>
 		</el-col>
 	</el-row>
 </template>
 
-<script>
-	export default {
-		props: {
-			size: { type: String, default: 'default' },
-			disabled: { type: Boolean, default: false },
-			startPlaceholder: { type: String },
-			endPlaceholder: { type: String },
-			separator: { type: String, default: '-' },
-			min: { type: Number, default: Math.minValue },
-			max: { type: Number, default: Math.maxValue },
-			modelValue: { type: Object, default: () => ({}) }
-		},
-		
-		emits: ['update:modelValue'],
-		
-		setup(props, context) {
-			const { modelValue } = toRefs(props)
-			
-			const minValue = ref(computed(() => modelValue.value.min))
-			const maxValue = ref(computed(() => modelValue.value.max))
-			
-			const updateMinValue = (v) => {
-				modelValue.value.min = v
-				context.emit('update:modelValue', modelValue.value)
-			}
-			const updateMaxValue = (v) => {
-				modelValue.value.max = v
-				context.emit('update:modelValue', modelValue.value)
-			}
-				
-			return {
-				minValue, maxValue,
-				updateMinValue, updateMaxValue
-			}
-		}
+<script setup>
+import { watch } from 'vue';
+	const props = defineProps({
+		size: { type: String, default: 'default' },
+		disabled: { type: Boolean, default: false },
+		startPlaceholder: { type: String },
+		endPlaceholder: { type: String },
+		separator: { type: String, default: '-' },
+		min: { type: Number, default: Math.minValue },
+		max: { type: Number, default: Math.maxValue },
+		modelValue: { type: Object, default: () => ({}) }
+	})
+	
+	const emits = defineEmits(['update:modelValue'])
+	
+	const minValue = ref(props.modelValue.min)
+	const maxValue = ref(props.modelValue.max)
+	
+	watch(()=>props.modelValue, (v) => {
+		minValue.value = v.min
+		maxValue.value = v.max
+	}, { deep: true })
+	
+	const updateMinValue = () => {
+		emits('update:modelValue', { min: minValue.value, max: maxValue.value })
 	}
+	
+	const updateMaxValue = () => {
+		emits('update:modelValue', { min: minValue.value, max: maxValue.value })
+	}
+	
 </script>
 
 <style scoped lang="scss">
 	.u-number-range {
+		width: 250px;
+		
 		:deep(.el-input-number) {
 			width: 100%;
 		}

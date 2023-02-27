@@ -100,6 +100,8 @@
 			valueFormatter: (v) => { return Number(v); },
 			valueKey: 'key'
 		},
+		{ name: 'receiver_ids', label: '接收人' },
+		{ name: 'description', label: '简介', type: 'textarea' },
 		{ name: 'content', label: '内容', type: 'editor' }
 	])
 	

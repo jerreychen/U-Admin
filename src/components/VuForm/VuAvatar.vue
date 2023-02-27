@@ -90,7 +90,7 @@
 	const store = useStore()
 
 	const props = defineProps({
-		action: { type: String },
+		action: { type: String, required: true },
 		name: { type: String, default: 'file' },
 		modelValue: { type: String, default: defaultAvatarUrl },
 		map: { type: Object, default: () => ({ }) },
@@ -175,6 +175,10 @@
 	}
 	
 	const handleDialogConfirm = () => {
+		if(!imageUrl.value) {
+			return message('错误提示', '请选择图片').notify('error')
+		}
+		
 		cropper.value.getCropBlob(data => {
 			const file = new File([data], 'avatar_crop.png', { 
 				type: 'image/png', 
@@ -192,10 +196,7 @@
 					message('成功提示', '头像更新成功！').notify('success')
 					emits('update:modelValue', url.startsWith('http') ? url : `${import.meta.env.VITE_APP_API_HOST}${url}`)
 					dialogVisible.value = false
-					return 
 				}
-				
-				message('错误提示', res[resMap['message']] || errorMessage).notify('error')
 			})
 		})
 	}

@@ -320,7 +320,7 @@ export default {
 			return this.addHours(days * 24);
 		}
 		Date.prototype.addMonths = function(mons) {
-			return new Date(this.getFullYear(), this.getMonth() + mons + 1, this.getDate())
+			return new Date(this.getFullYear(), this.getMonth() + mons, this.getDate())
 		}
 		Date.prototype.addYears = function(years) {
 			years = parseInt(years) || 0;
