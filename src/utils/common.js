@@ -1,5 +1,5 @@
 import { onMounted, onUnmounted } from 'vue'
-import storage from './storage.js'
+import types from '@/utils/types.js';
 
 export function useEventListener(target, event, callback) {
   // 如果你想的话，
@@ -50,7 +50,25 @@ export const getApiPath = (path) => {
 	return `${import.meta.env.VITE_APP_BASE_API}/${path}`
 }
 
-export const combinePath = function () {
+export const buildQuery = (query) =>  {
+	if(!query) {
+		return ''
+	}
+	
+	let q = []
+	// 如果 query 是字符串
+	if(types.isString(query)) {
+		query = JSON.parse(query)
+	}
+	
+	for(let key in query) {
+		q.push(`${key}=${query[key]}`)
+	}
+	
+	return (q.length > 0 ? '?' : '') + q.join('&')
+}
+
+export const combinePath = function() {
 	let path = []
 	for(let i = 0; i < arguments.length; i++) {
 		path.push(arguments[i] || '')
@@ -58,6 +76,26 @@ export const combinePath = function () {
 	return path.filter(p=> {
 		return !!p
 	}).join('/').replace('//', '/')
+}
+
+export const getHttpUrl = function() {
+	if(arguments.length === 1) {
+		return arguments[0]
+	}
+	
+	let path = []
+	for(let i = 0; i < arguments.length; i++) {
+		path.push(arguments[i] || '')
+	}
+	
+	// 如果路径中含有 http
+	let url = path.find(p => p.startsWith('http'));
+	if(!url) {
+		const query = path.splice(path.length - 1)
+		url = combinePath(...path) + buildQuery(query[0])
+	}
+	
+	return url
 }
 
 export const getDictLabel = (dictList, key) => { 

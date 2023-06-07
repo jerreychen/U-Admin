@@ -1,33 +1,38 @@
 import store from '@/store/index.js';
-import router from '@/router/index.js';
 import { toRaw } from '@vue/reactivity';
 import Layout from '@/layout/index.vue';
 import Empty from '@/layout/empty.vue';
 
+// 取到 /pages 目录下的所有的 .vue 文件
 const modules = import.meta.glob('/src/pages/**/*.vue');
 
+// 把所有按钮过滤掉
 const filterMenu = (menu) => {
 	const { menu_type } = menu
 	return menu_type !== 2
 }
 
+// 组合 RouteItem
 // menu_type: 0 -folder, 1 -link, 2 -button
 const buildRouteItem = (menu) => {
 	const { 
-		id, link_type, path, title, url
+		id, path, title, url
 	} = menu;
-	 
+	// 如果 '/' 开头 要去掉 '/'
+	const filePath = path.startsWith('/') ? path.substr(1) : path
+	
 	return {
 		name: id,
 		path: url,
 		meta: { title },
-		component: modules[`/src/${path.startsWith('/') ? path.substr(1) : path}`]
+		component: modules[`/src/${filePath}`]
 	}
 }
 
-const addRouteItemRecursively = (menu) => {
+// 对当前 menu 进行 递归组合
+const buildRouteItemRecursively = (menu) => {
 	const {
-		children, id, link_type, menu_type, path, title, url
+		children, id, menu_type, title, url
 	} = menu;
 	
 	// 如果菜单项是链接 
@@ -42,7 +47,7 @@ const addRouteItemRecursively = (menu) => {
 		meta: { title, noPage: true },
 		component: Empty,
 		children: children.filter(filterMenu).map(item => {
-			return addRouteItemRecursively(item)
+			return buildRouteItemRecursively(item)
 		})
 	}
 }
@@ -54,10 +59,13 @@ export default () => {
 	// 过滤 按钮
 	return menuList.filter(filterMenu).map(item =>{
 		const { children = [], url, id, menu_type, title } = item;
+		
+		const path = url.startsWith('/') ? url : `/${url}`
+		
 		// 当前菜单项是链接
 		if(menu_type === 1) {
 			return {
-				path: url.startsWith('/') ? url : `/${url}`,
+				path,
 				name: id,
 				meta: { title },
 				component: Layout,
@@ -70,12 +78,12 @@ export default () => {
 		// 当前菜单项不是链接（菜单组）
 		// 列出 子菜单是 link，作为子菜单项目
 		return {
-			path: url.startsWith('/') ? url : `/${url}`,
+			path,
 			name: id,
 			meta: { title, noPage: true },
 			component: Layout,
 			children: children.filter(filterMenu).map(subItem => {
-				return addRouteItemRecursively(subItem)
+				return buildRouteItemRecursively(subItem)
 			})
 		}
 	})

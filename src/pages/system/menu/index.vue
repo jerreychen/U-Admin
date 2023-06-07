@@ -142,6 +142,13 @@
 				return d.menu_type == 2
 			}
 		},
+		{ name: 'query', label: '查询参数', placeholder: '请输入查询参数：{ "a": "va", ... } 格式',
+			tips: '查询参数将以 ?a=va&... 形式跟在地址后',
+			style: 'margin-right:0;width: 100%',
+			hidden: (v, d) => {
+				return d.menu_type != 1
+			}
+		},
 		{ name: 'path', label: '组件地址', tips: '组件地址必须以【/pages/】开头【.vue】结尾', 
 			style: 'margin-right:0;width: 100%',
 			hidden: (v, d) => {
@@ -189,7 +196,7 @@
 	})
 	
 	const getDataRecord = (id) => {
-		return useService('menu').get({id}).then(res => {
+		return useService('menu').find({id}).then(res => {
 			return res.data || {};
 		})
 	}

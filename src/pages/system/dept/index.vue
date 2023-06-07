@@ -58,7 +58,7 @@
 	])
 	
 	const handleGetDept = (id) => {
-		return useService('dept').get({ id }).then(res => {
+		return useService('dept').find({ id }).then(res => {
 			return res.data || {}
 		})
 	}

@@ -451,7 +451,7 @@
 	searchFormValue.value[pageIndexName.value] = props.pageIndex - 1
 	searchFormValue.value[pageSizeName.value] = props.pageSize
 	
-	const currentPage = ref(1)
+	const currentPage = ref(props.pageIndex)
 	
 	const importName = computed(() => {
 		return getObjectProp(props.importProps, 'name', 'file')
@@ -540,7 +540,7 @@
 		editorVisible.value = false
 	}
 	// 数据提交
-	const handleEditorSubmit = () => {
+	const handleEditorSubmit = (val) => {
 		if(props.drawerForm) {
 			const formValue = editorRef.value.getValue()
 			

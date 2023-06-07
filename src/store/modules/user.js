@@ -75,7 +75,7 @@ const user = {
 				// 刷新菜单
 				store.dispatch('app/refreshMenu')
 				// 获取用户
-				const userInfoRes = await getInfo({ user_id }); 
+				const userInfoRes = await getInfo({ id: user_id }); 
 				
 				// 设置用户资料缓存
 				if(userInfoRes.code === 200) {

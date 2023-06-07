@@ -3,16 +3,18 @@ import { toRaw } from '@vue/reactivity';
 
 const buildMenuRecursive = (menu) => {
 	const { 
-		children, icon, id, link_type, menu_type, path, title, url
+		children, icon, id, link_type, menu_type, path, title, url, query
 	} = menu;
 	
 	return {
-		icon, id, 
+		id, 
+		icon, 
 		link_type, 
 		menu_type, 
 		path, 
 		title,
 		url,
+		query,
 		children: (children || []).filter(item => {
 			// menu_type: 0 -folder, 1 -link, 2 -button
 			return !item.hidden && item.menu_type !== 2;

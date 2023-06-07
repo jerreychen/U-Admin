@@ -1,5 +1,5 @@
 import router  from '@/router/index.js'
-import { combinePath, getRandomString } from '@/utils/common.js'
+import { combinePath, getHttpUrl, getRandomString } from '@/utils/common.js'
 import types from '@/utils/types.js';
 
 export default {
@@ -38,6 +38,7 @@ export default {
 		
         app.config.globalProperties.getRandomString = getRandomString
         	
+        app.config.globalProperties.getHttpUrl = getHttpUrl
         app.config.globalProperties.combinePath = combinePath
         
 		app.config.globalProperties.isUndefined = function(value) {

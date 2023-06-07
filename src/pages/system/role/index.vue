@@ -60,7 +60,7 @@
 	])
 	
 	const handleGetRole = (id) => {
-		return useService('role').get({ id }).then(res => {
+		return useService('role').find({ id }).then(res => {
 			return res.data || {}
 		})
 	}

@@ -116,7 +116,7 @@
 	})
 	
 	const getDictItem = (id) => {
-		return useService('dict').get({ id }).then(res => {
+		return useService('dict').find({ id }).then(res => {
 			const item = res.data || {}
 			item.dict_type = !!item.parent_id ? '1' : '0'
 			return item;

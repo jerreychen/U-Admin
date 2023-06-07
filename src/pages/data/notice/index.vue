@@ -106,7 +106,7 @@
 	])
 	
 	const handleGet = (id) => {
-		return useService('notice').get({ id }).then(res => {
+		return useService('notice').find({ id }).then(res => {
 			return res.data || {}
 		})
 	}

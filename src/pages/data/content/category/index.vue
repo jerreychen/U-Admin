@@ -81,7 +81,7 @@
 	}
 	
 	const handleGet = (id) => {
-		return useService('content_category').get({ id }).then(res => {
+		return useService('content_category').find({ id }).then(res => {
 			const data = res.data || {}
 			if(!data.keywords) {
 				data.keywords = []

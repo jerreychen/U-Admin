@@ -1,5 +1,4 @@
 import { createStore } from 'vuex'
-import storage from '@/utils/storage.js'
 
 import app from './modules/app.js'
 import user from './modules/user.js'

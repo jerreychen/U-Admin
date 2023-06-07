@@ -1,6 +1,6 @@
 <template>
 	<VuContent title="个人资料" :showBack="true">
-		<VuFormBox :fields="fieldList" :value="formValue" :showCancel="false"></VuFormBox>
+		<VuFormBox :fields="fieldList" :value="formValue" :showCancel="false" @submit="handleFormSubmit"></VuFormBox>
 	</VuContent>
 </template>
 
@@ -22,13 +22,23 @@
 		{ name: 'remarks', label: '备注', type: 'textarea' }
 	])
 	
-	useService('user').find({ id: store.getters.userId }).then(res => {
+	useService('user').post('getInfo', { id: store.getters.userId }).then(res => {
 		if(res.code !== 200) {
 			return
 		}
 		
 		formValue.value = res.data
 	})
+	
+	const handleFormSubmit = (values) => {
+		useService('user').update(values).then(res => {
+			if(res.code !== 200) {
+				return
+			}
+			
+			message('提示信息', '资料更新成功').notify('success')
+		})
+	}
 </script>
 
 <style>

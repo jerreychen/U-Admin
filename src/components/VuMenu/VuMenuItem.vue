@@ -11,14 +11,15 @@
 				:icon="item.icon"
 				:children="item.children"
 				:parentUrl="combinePath(parentUrl, url)"
-				:menuType="item.menu_type"></VuMenuItem>
-			<el-menu-item :index="combinePath(parentUrl, url, item.url)" v-else>
+				:menuType="item.menu_type">
+			</VuMenuItem>
+			<el-menu-item :index="getHttpUrl(parentUrl, url, item.url, item.query)" v-else>
 				<VuIcon :name="item.icon" v-if="item.icon"></VuIcon>
 				<span>{{item.title}}</span>
 			</el-menu-item>
 		</template>
 	</el-sub-menu>
-	<el-menu-item :index="combinePath(parentUrl, url)" v-else>
+	<el-menu-item :index="getHttpUrl(parentUrl, url, query)" v-else>
 		<VuIcon :name="icon" v-if="icon"></VuIcon>
 		<span>{{title}}</span>
 	</el-menu-item>
@@ -32,6 +33,7 @@
 		icon: { type: String },
 		parentUrl: { type: String },
 		url: { type: String },
+		query: { type: String },
 		title: { type: String },
 		children: { type: Array }
 	})

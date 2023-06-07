@@ -23,6 +23,7 @@
 				:children="item.children"
 				:parentUrl="parentUrl"
 				:menuType="item.menu_type"
+				:query="item.query"
 				:key="`sub-menu-${index}`">
 			</VuMenuItem>
 		</template>

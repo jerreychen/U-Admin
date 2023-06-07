@@ -66,7 +66,7 @@
 	
 	const getDistrictItem = (id) => {
 		// level: 0 省份，1 市，2 区/县/市
-		return useService('district').get({ id }).then(res => {
+		return useService('district').find({ id }).then(res => {
 			const record = res.data || {}
 			if(record.lng) {
 				record.lng = Number(record.lng)
@@ -105,7 +105,7 @@
 			if(res.code === 200) {
 				message('成功提示', '编辑行政区成功！').notify('success');
 				visible.value = false;
-				const { row, node, resolve } = loadFuncs.get(formValue.parent_id)
+				const { row, node, resolve } = loadFuncs.find(formValue.parent_id)
 				loadChildrenDataList(row, node, resolve);
 			}
 		})

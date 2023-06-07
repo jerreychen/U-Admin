@@ -16,7 +16,7 @@ export const logout = () => {
 }
 
 export const getInfo = (data) => {
-	return request.post('/user/get', data)
+	return request.post('/user/getInfo', data)
 }
 
 export const getDeptTree = (data) => {

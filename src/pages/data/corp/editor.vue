@@ -75,7 +75,7 @@
 		}
 		
 		formLoading.value = true
-		useService('corp').get({ id: corpId }).then(res => {
+		useService('corp').find({ id: corpId }).then(res => {
 			formLoading.value = false
 			if(res.code === 200) {
 				formValue.value = res.data
