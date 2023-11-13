@@ -92,6 +92,7 @@
 	const props = defineProps({
 		action: { type: String, required: true },
 		name: { type: String, default: 'file' },
+		headers: { type: Object, default: () => ({ })},
 		modelValue: { type: String, default: defaultAvatarUrl },
 		map: { type: Object, default: () => ({ }) },
 		data: { type: Object, default: ()=>({ }) },
@@ -187,11 +188,17 @@
 			
 			let params = new FormData()
 			params.append(props.name, file)
+			//附加数据
+			if(props.data) {
+				for(let key in props.data) {
+					params.append(key, props.data[key])
+				}
+			}
 			
-			request.post(props.action, params, {
-				headers: { 'Content-Type': 'multipart/form-data;charset=utf-8' }
-			}).then(res=>{
-				if(res[resMap['code']] === 0) {
+			const headers = Object.assign({ 'Content-Type': 'multipart/form-data;charset=utf-8' }, props.headers);
+			
+			request.post(props.action, params, { headers }).then(res=>{
+				if(res[resMap['code']] === 200) {
 					let url = res[resMap['data']]
 					message('成功提示', '头像更新成功！').notify('success')
 					emits('update:modelValue', url.startsWith('http') ? url : `${import.meta.env.VITE_APP_API_HOST}${url}`)

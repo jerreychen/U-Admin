@@ -12,11 +12,11 @@
 	        :showMessage="false" 
 			:labelWidth="labelWidth"
 			:showLabel="showLabel"
-	        confirmButtonIcon="Search"
+	        confirmIcon="Search"
 	        @submit="handleSearch"
 			@cancel="handleResetSearch"
-	        confirmButtonText="搜索"
-	        cancelButtonText="重置">
+	        confirmText="搜索"
+	        cancelText="重置">
 			<template #buttonLeft>
 				<el-link v-if="showMore" type="primary" :icon="moreShowed ? 'ArrowUp' : 'ArrowDown'" style="margin-left: .75rem;" @click="handleShowmoreClick">
 					{{moreShowed ? '收起' : '展开'}}
@@ -79,6 +79,8 @@
 			:row-key="rowKey"
 			:lazy="lazy && !!lazyQuery"
 			:load="lazyQuery"
+			@sort-change="handleSortChange"
+			:sort-method="sortMethod"
             @cell-click="cellClick"
             @cell-dblclick="cellDbClick"
             @row-click="rowClick"
@@ -93,7 +95,7 @@
             </el-table-column>
 			
 			<el-table-column
-				type="index"
+				type="index" :index="indexMethod"
 				:width="indexColumn.width ?? '55px'"
 				:align="indexColumn.align ?? 'center'"
 				:label="indexColumn.title ?? '序号'"
@@ -159,7 +161,12 @@
                 :width="`${rowActionColumnWidth || actionButtons.length * (rowActionButtonLabel ? 56 : 25)}px`"
                 v-if="showAction && showActionColumn && (!!actionButtons.length || !!rowActionCommands.length)">
                 <template #default="scope">
-                    <div class="row-action-buttons d-flex row middle space-around" :class="{ 'center': rowActionCenter }">
+                    <div class="row-action-buttons d-flex middle space-around" 
+						:class="{ 
+							'center': rowActionCenter,
+							'row': !rowActionVertical,
+							'column': rowActionVertical
+						}">
 						<template v-for="(btn, btnIndex) in actionButtons" :key="`u-table-action-button-${btnIndex}`">
 							<template v-if="!rowActionButton || rowActionButton(scope.row, btn) !== false">
 								<el-popconfirm 
@@ -369,6 +376,7 @@
 	
 		showActionColumn: { type: Boolean, default: true },
 		rowActionColumnWidth: { type: Number },
+		rowActionVertical: { type: Boolean, default: false },
 		rowActionCenter: { type: Boolean, default: false },
 		rowActionButton: { type: Function },
 		rowActionButtonLabel: { type: Boolean, default: true },
@@ -384,6 +392,7 @@
 		cellClick: { type: Function },
 		cellDbClick: { type: Function },
 		rowClick: { type: Function },
+		sortMethod: { type: Function },
 		rowDbClick: { type: Function },
 		rowSelectable: { type: Function },
 		get: { type: Function },
@@ -393,8 +402,9 @@
 	})
 	
 	const emits = defineEmits([
-		'create', 'update', 'query', 'reset', 'import', 'export', 'print',
-		'batchDelete', 'rowCommand', 'rowCreate', 'rowSelect', 'rowView', 'rowEdit', 'rowDelete'
+		'create', 'update', 'query', 'reset', 'import', 'export', 'print', 'beforeOpenEditor',
+		'batchDelete', 'rowCommand', 'rowCreate', 'rowSelect', 'rowView', 'rowEdit', 'rowDelete',
+		'sortChange'
 	])
 
 	const tableRef = ref()
@@ -476,6 +486,11 @@
 		return Math.ceil(props.total / searchFormValue.value[pageSizeName.value])
 	}))
 	
+	const indexMethod = (n) => {
+		const { pageSize } = props
+		return n + 1 + pageSize * (currentPage.value - 1)
+	}
+	
 	const searchFormVisible = ref(true)
 	const selectedRows = ref([])
 	const moreShowed = ref(false)
@@ -495,6 +510,7 @@
 	
 	// 新增数据
 	const handleNewRecord = (data) => {
+		emits('beforeOpenEditor')
 		if(!props.editorFields || props.editorFields.length === 0) {
 			emits('rowCreate');
 			return
@@ -514,6 +530,7 @@
 	// 行编辑事件
 	const handleRowEdit = (row) => {
 		const id = row[props.rowKey];
+		emits('beforeOpenEditor', row)
 		
 		if(!props.get || !props.editorFields || props.editorFields.length === 0) {
 			emits('rowEdit', row);
@@ -703,12 +720,17 @@
 		emits('rowCommand', row, command);
 	}
 	
+	const handleSortChange = ({ column, prop, order }) => {
+		emits('sortChange', column, prop, order);
+	}
+	
 	onMounted(() => {
 	 	emits('query', searchFormValue.value)
 	})
 	
 	defineExpose({
 		doLayout: () => { tableRef.value.doLayout(); },
+		selectedRows: () => { return selectedRows.value },
 		editorValue: editorValue,
 		reload: handleReloadSearch,
 		create: handleNewRecord
@@ -757,5 +779,10 @@
 		.row-action-buttons {
 			margin: 0px -0.75rem;
 		}
+		
+		:deep(.el-link) {
+			font-size: 13px;
+		}
 	}
+	
 </style>

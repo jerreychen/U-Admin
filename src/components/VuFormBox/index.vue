@@ -82,7 +82,7 @@
 	
 	    formRef.value.form.validate(valid => {
 	        if(!valid) {
-	            return
+	            return message('错误提示', '请检查数据是否输入正确！').notify('error')
 	        }
 	
 			if(props.confirmMessage) {

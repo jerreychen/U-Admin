@@ -5,6 +5,7 @@
 			v-model="data[prop]" 
 			:config="config" 
 			:data="data" 
+			@done="config.done"
 			:prop="prop">
 		</component>
 		
@@ -54,6 +55,19 @@
 			@change="isFunction(config.change) ? config.change(data, prop) : undefined"
 			:disabled="config.disabled || false">
 		</el-input-number>
+		
+		<VuTextInput 
+			v-else-if="type === 'x-input'" 
+			v-model="data[prop]"
+			:placeholder="config.placeholder"
+			:replace="config.pattern || /[^\d\.]+?/"
+			:maxlength="config.maxlength"
+			:size="config.size || 'default'"
+			:style="config.style"
+			:clearable="config.clearable"
+			@change="isFunction(config.change) ? config.change($event, data, prop) : undefined"
+			:disabled="config.disabled">
+		</VuTextInput>
 			
 		<VuSelect
 			v-else-if="type === 'select'"
@@ -116,6 +130,16 @@
 			:style="config.style">
 		</el-image>	
 		
+		<VuUpload v-else-if="type === 'upload'"
+			class="upload_in_table"
+			v-model="data[prop]"
+			listType="picture-card"
+			:showTips="false"
+			:action="config.action" 
+			:style="config.style"
+			:limit="config.limit">
+		</VuUpload>
+		
 		<el-progress 
 			:percentage="data[prop]" 
 			:text-inside="config.textInside"
@@ -132,6 +156,7 @@
 			v-else-if="type === 'link'"
 			:size="config.size || 'default'"
 			:underline="config.underline ?? true"
+			target="_blank"
 			:type="config.type"
 			:icon="isFunction(config.icon) ? config.icon(data, prop) : config.icon"
 			:href="isFunction(config.href) ? config.href(data, prop) : config.href"
@@ -172,9 +197,11 @@
 
 <script>
 	import VuSelect from '../VuForm/VuSelect.vue'
+	import VuTextInput from '../VuForm/VuTextInput.vue'
+	import VuUpload from '../VuForm/VuUpload.vue'
 	
 	export default {
-		components: [VuSelect],
+		components: [VuSelect, VuTextInput],
 		
 		props: {
 			index: { type: [String, Number], default: () => Math.floor(Math.random() * 100000) },
@@ -194,5 +221,6 @@
 	}
 </script>
 
-<style>
+<style scoped lang="scss">
+
 </style>

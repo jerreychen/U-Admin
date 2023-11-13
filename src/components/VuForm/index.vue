@@ -48,6 +48,7 @@
 					:is="field.component"
 					:config="field.config"
 					:data="formValue"
+					@done="field.done"
 					v-model="formValue[field.name]">
 				</component>
 
@@ -220,17 +221,32 @@
 					:list-type="field.listType"
 					:drag="field.drag"
 					:multiple="field.multiple"
-					:data="field.data"
+					:data="isFunction(field.data) ? field.data(formValue) : field.data"
 					:map="field.map"
 					:accept="field.accept"
+					@remove="field.onRemove"
 					:fileSize="field.fileSize"
+					:showTips="field.showTips"
 					:errorMessage="field.errorMessage"
 					v-model="formValue[field.name]">
 				</VuUpload>
 
+				<VuUploadInput
+					v-else-if="field.type === 'upload-input'"
+					:action="field.action"
+					:label="field.inputLabel"
+					:name="field.inputName"
+					:method="field.method"
+					:headers="field.headers"
+					:map="field.map"
+					:accept="field.accept"
+					v-model="formValue[field.name]">
+				</VuUploadInput>
+
 				<VuAvatar 
 					v-else-if="field.type === 'avatar'"
 					:action="field.action"
+					:data="isFunction(field.data) ? field.data(formValue) : field.data"
 					:name="field.inputName"
 					:radius="field.radius"
 					:changeable="field.changeable"
@@ -599,18 +615,12 @@
 		
 			.u-form_item {
 				
-				&.inline-tips {
-					:deep(.el-form-item__content) {
-						& > :first-of-type {
-							max-width: 50% !important;
-						}
-						
-						.u-form-item_tips {
-							margin-left: 1rem;
-							width: calc(50% - 1rem) !important;
-						}
-					}
-				} 
+				:deep(.el-form-item__content) {
+					align-items: flex-start;
+					display: flex;
+					flex-direction: column;
+					flex: 1;
+				}
 			
 				.u-form-splitter {
 					align-items: center;

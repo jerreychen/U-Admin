@@ -1,5 +1,5 @@
 <template>
-	<div class="u-tag-list d-flex row bottom">
+	<div class="u-tag-list d-flex w-100 row bottom">
 		<div class="el-input__wrapper d-flex row left">
 			<el-tag class="margin-right-2"
 				v-for="(item, index) in tagList"
@@ -92,6 +92,10 @@
 			line-height: 30px;
 			min-height: 30px;
 			width: 100%;
+			
+			&:hover {
+				box-shadow: 0 0 0 1px var(--el-input-border-color,var(--el-border-color)) inset !important
+			}
 			
 			.el-tag {
 				margin: 3px 0;

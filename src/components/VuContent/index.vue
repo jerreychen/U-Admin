@@ -30,7 +30,10 @@
 		}">
 			<slot />
 		</div>
-		<div class="u-content_footer d-flex row right padding-x-4 padding-bottom-4" v-if="showFooter">
+		<div class="u-content_footer d-flex row padding-x-4 padding-bottom-4" :class="{
+			'right': footerAlign === 'right',
+			'center': footerAlign === 'center'
+		}" v-if="showFooter">
 			<slot name="footer" />
 		</div>
 	</div>
@@ -47,6 +50,7 @@
 		loading: { type: Boolean, default: false },
 		showBack: { type: Boolean, default: false },
 		showFooter: { type: Boolean, default: false },
+		footerAlign: { type: String, default: 'right' },
 		collapsable: { type: Boolean, default: false }
 	})
 	

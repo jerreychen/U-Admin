@@ -73,7 +73,7 @@ const user = {
 				
 				const { user_id } = loginRes.data;
 				// 刷新菜单
-				store.dispatch('app/refreshMenu')
+				await store.dispatch('app/refreshMenu')
 				// 获取用户
 				const userInfoRes = await getInfo({ id: user_id }); 
 				

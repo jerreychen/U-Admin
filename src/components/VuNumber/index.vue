@@ -17,17 +17,27 @@
 		thousand: { type: Boolean, default: false }
 	})
 	
-	const len = (props.value + '').length
-	const formatVal = ref('0'.padStart(len, '0'))
+	const len = computed(() => {
+		return (props.value + '').length
+	})
 	
-	let i = props.value > 100 ? (props.value - 100) : 0;
-	const intl = setInterval(() => {
-		if(++i >= props.value) {
-			clearInterval(intl)
+	const formatVal = ref('0'.padStart(len, '0'))
+	 
+	watch(() => props.value, v => {
+		let i = v > 100 ? (v - 100) : 0;
+		if(v > 0) {
+			let intl = setInterval(() => {
+				if(++i >= v) {
+					clearInterval(intl)
+					formatVal.value = props.thousand ? v.toThousands().padStart(len, '0') : (v+'').padStart(len, '0')
+					return
+				}
+				
+				formatVal.value = props.thousand ? i.toThousands().padStart(len, '0') : (i+'').padStart(len, '0')
+			}, 10)
 		}
-		
-		formatVal.value = props.thousand ? i.toThousands().padStart(len, '0') : (i+'').padStart(len, '0')
-	}, 1) 
+	})
+	
 </script>
 
 <style lang="scss" scoped>

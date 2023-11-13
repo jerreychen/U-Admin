@@ -1,5 +1,5 @@
 <template>
-	<div class="u-wang-editor">
+	<div class="u-wang-editor" v-if="editorVisible">
 		<Toolbar class="u-wang-editor_toolbar"
 			:editor="editorRef" 
 			:defaultConfig="toolbarCfg"
@@ -18,6 +18,9 @@
 	import '@wangeditor/editor/dist/css/style.css' // 引入 css
 	import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 	
+	import store from '@/store/index.js'
+	import { getApiPath } from '@/utils/common.js' 
+
 	const props = defineProps({
 		height: { type: Number, default: 300 },
 		placeholder: { type: String },
@@ -33,7 +36,21 @@
 	const editorRef = shallowRef()
 	const editorConfig = ref(computed(() => {
 		return Object.assign({ 
-			placeholder: props.placeholder
+			placeholder: props.placeholder,
+			MENU_CONF: {
+				uploadImage: {
+					server: getApiPath('/api/misc/upload'),
+					fieldName: 'file',
+					headers: {
+						'USER-TOKEN': store.getters.token 
+					},
+					customInsert(res, insertFn) {                  // JS 语法
+						// res 即服务端的返回结果
+						// 从 res 中找到 url alt href ，然后插入图片
+						insertFn(res.data, '', res.data)
+					},
+				}
+			}
 		}, props.config)
 	}))
 	
@@ -73,6 +90,16 @@
 	const handleChange = (editor) => {
 		emits('update:modelValue', editor.getHtml())
 	}
+	
+	// 延时 fix bug: Uncaught (in promise) Error: Cannot resolve a DOM node from Slate node: {...}
+	const editorVisible = ref(false)
+	 setTimeout(() => {
+		editorVisible.value = true
+	 }, 300)
+	 
+	onMounted(() => {
+		 
+	})
 	
 	// 组件销毁时，也及时销毁编辑器
 	onBeforeUnmount(() => {

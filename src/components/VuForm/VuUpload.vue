@@ -38,7 +38,7 @@
 				<el-button type="primary">点击上传文件</el-button>
 			</template>
 		</template>
-		<template #tip v-if="uploadTips || tips">
+		<template #tip v-if="showTips && (uploadTips || tips)">
 			<div class="el-upload__tip">{{tips}}{{uploadTips}}</div>
 		</template>
     </el-upload>
@@ -77,13 +77,13 @@
 		previewable: { type: Boolean, default: true },
 		errorMessage: { type: String, default: '文件上传失败！' },
 		onUploaded: { type: Function },
+		showTips: { type: Boolean, default: true }
 	})
 	
-	const emits = defineEmits(['update:modelValue'])
-	
-	const fileList = ref(props.modelValue)
+	const emits = defineEmits(['update:modelValue', 'remove'])
+	const fileList = ref(props.modelValue || [])
 	const actionHeaders = Object.assign({
-		'PC-TOKEN': store.getters.token
+		'USER-TOKEN': store.getters.token
 	}, props.headers)
 	
 	const resMap = Object.assign({ 
@@ -176,7 +176,8 @@
 			return
 		}
 		
-		fileList.value.splice(index, 1)
+		fileList.value.splice(index, 1);
+		emits('remove', file);
 	}
 	
 	const handleOnExceed = () => {
